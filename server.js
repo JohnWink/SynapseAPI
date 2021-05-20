@@ -8,8 +8,8 @@ const db = require("./models/index.js");
 var app = express();
 
 var corsOptions = {
-    origin: "*",
-    methods:"GET,HEAD,PUT,PATCH,POST,DELETE",
+    origin: "https://eager-hugle-673cd6.netlify.app",
+    methods:"GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
     optionsSuccessStatus: 200
   };
 
