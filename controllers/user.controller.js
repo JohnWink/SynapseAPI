@@ -10,6 +10,7 @@ const nodemailerConfig = require('../config/nodemailer.config')
 
 
 
+
 exports.signUp = (req,res) =>{
     if(!req.body.name || !req.body.email || !req.body.password ||
         !req.body.address || !req.body.nif || !req.body.nipc){
