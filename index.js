@@ -20,7 +20,7 @@ app.use(cors(corsOptions));
 app.use(function (req, res, next) {
 
   // Website you wish to allow to connect
-  res.setHeader('Access-Control-Allow-Origin', ['http://localhost:8888','https://eager-hugle-673cd6.netlify.app']);
+  res.setHeader('Access-Control-Allow-Origin', 'https://eager-hugle-673cd6.netlify.app');
 
   // Request methods you wish to allow
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
