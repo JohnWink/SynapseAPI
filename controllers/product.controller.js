@@ -1,10 +1,13 @@
 const db = require ("../models");
+const stockModel = require("../models/stock.model");
 const Product = db.products;
 const Item = db.items;
 const ProductInformation = db.productInformations
 const Category = db.categories
 const SubCategory = db.subCategories
 const image = db.images
+const Stock = db.stocks
+const Sequelize = require("sequelize");
 
 exports.findOne = (req,res) =>{
     const id = req.params.idProduct
@@ -156,4 +159,38 @@ exports.activate = (req,res) =>{
         res.status(500).send({message:err.message||"Error while activating product"})
     })
     
+}
+
+
+
+exports.countSales = (req,res) =>{
+    const id = req.params.idStore
+
+    Product.findAll({
+       
+        include:[
+            {
+                model:Item,
+                as:'items',
+                where:{idStore:id},
+                include:[
+                    {
+                        model:Stock,
+                        as:'stocks',
+                        where:{active:false},
+                    }
+                ],
+            },
+            {
+                model:ProductInformation,
+                as:'productInformations',
+                where:{active:true, language:'portuguese'}
+            } 
+        ],
+    }).then(data=>{
+
+        res.send(data) // to grab the "Count" just use response.count on the frontend
+    }).catch(err=>{
+        res.status(500).send({message:err.message||"Error while finding all stocks by items"})
+    })
 }

@@ -1,6 +1,6 @@
 const db = require ("../models");
 const Store = db.stores;
-
+const History = db.histories
 
 exports.create = (req,res) => {
      const store = {
@@ -83,5 +83,25 @@ exports.getAll = (req,res) =>{
         res.status(500).send({
             message:err.message || `Error occurred while getting all stores` 
         })
+    })
+}
+
+exports.findAllSales = (req,res) =>{
+    Store.findAll({
+        attributes:['id','name'],
+   
+        
+        include:[
+            {
+                model:History,
+                as:'histories',
+                attributes:['idStock'],
+                group:['idStock']
+            },
+        ],
+    }).then(data=>{
+        res.send(data) // to grab the "Count" just use response.count on the frontend
+    }).catch(err=>{
+        res.status(500).send({message:err.message||"Error while finding all sales"})
     })
 }

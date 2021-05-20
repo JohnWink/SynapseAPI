@@ -58,6 +58,14 @@ db.histories.belongsTo(db.users,{
   }
 })
 
+
+//HISTORY-STORE
+db.histories.belongsTo(db.stores,{
+  foreignKey:{
+      name: "idStore"
+  }
+})
+
 //IMAGE-PRODUCT
 db.images.belongsTo(db.products,{
   foreignKey:"idProduct",

@@ -1,6 +1,6 @@
 const db = require ("../models");
 const Item = db.items
-
+const Stock = db.stocks
 
 exports.create = (req,res) =>{
     const idStore = req.params.idStore

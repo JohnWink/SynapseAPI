@@ -1,11 +1,11 @@
 module.exports = app =>{
     const category = require ("../controllers/category.controller")
-
-    app.get('/categories', category.findAll)
-    app.get('/categories/:idCategory', category.findOne)
-    app.post('/categories/', category.create)
-    app.put('/categories/:idCategory', category.update)
-    app.put('/categories/:idCategory/upload', category.upload)
-    app.put('/categories/:idCategory/activate', category.activate)
-    app.delete('/categories/:idCategory', category.delete)
+    const auth = require("../controllers/authentication")
+    app.get('/categories', auth.authenticateJWT, category.findAll)
+    app.get('/categories/:idCategory',  auth.authenticateJWT, category.findOne)
+    app.post('/categories/',  auth.authenticateJWT, category.create)
+    app.put('/categories/:idCategory',auth.authenticateJWT, category.update)
+    app.put('/categories/:idCategory/upload',auth.authenticateJWT, category.upload)
+    app.put('/categories/:idCategory/activate', auth.authenticateJWT, category.activate)
+    app.delete('/categories/:idCategory',auth.authenticateJWT, category.delete)
 }

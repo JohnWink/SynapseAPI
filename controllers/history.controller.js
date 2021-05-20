@@ -1,7 +1,8 @@
 const db = require ("../models");
 
 const History = db.histories
-
+const Stock = db.stocks
+const Store = db.stores
 
 exports.create = (req,res) =>{
 
@@ -22,4 +23,16 @@ exports.create = (req,res) =>{
     }).catch(err=>{
         res.status(500).send({message:err.message||"Error while creating history"})
     })
+
+   
 }
+
+exports.findAll=(req,res)=>{
+    History.findAll({where:{active:true}}).then(data=>{
+        res.send(data)
+    }).catch(err=>{
+        res.status(500).send({message:err.message||"Error while finding sales"})
+    })
+}
+
+

@@ -16,6 +16,7 @@ exports.create = (req,res) =>{
         }
     })
     const productInformation = {
+        idProduct: id,
         language: language,
         name : name,
         description: description,
