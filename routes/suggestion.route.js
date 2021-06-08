@@ -4,5 +4,5 @@ module.exports = app =>{
 
     app.get('/suggestions', auth.authenticateJWT, suggestion.countByProduct)
     app.post('/users/:idUser/suggestions',  auth.authenticateJWT, suggestion.create)
-    app.get('/suggestions/products',  auth.authenticateJWT, suggestion.findByProduct)
+    app.post('/suggestions/products',  auth.authenticateJWT, suggestion.findByProduct)
 }

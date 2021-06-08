@@ -30,15 +30,17 @@ exports.create = (req,res) =>{
     Publicity.findOne({where:{order:order}}).then(data=>{
         if(data){
             return res.status(403).send("Order number already exists")
+        }else{
+            Publicity.create(publicity).then(data=>{
+                return  res.send(data)
+            }).catch(err =>{
+                return  res.status(500).send({message:err.message||"Error while creating Publicity"})
+            })
         }
     })
     
 
-    Publicity.create(publicity).then(data=>{
-        return  res.send(data)
-    }).catch(err =>{
-        return  res.status(500).send({message:err.message||"Error while creating Publicity"})
-    })
+    
 }
 
 
@@ -138,30 +140,32 @@ exports.update = (req,res) =>{
         order: order,
     }
 
-    Publicity.findOne({where:{order:order}}).then(data=>{
+    Publicity.findOne({where:{order:order,active:true}}).then(data=>{
         if(data){
             return res.status(403).send("Order number already exists")
+        }else{
+            Publicity.update(publicity,
+                {where:{
+                    id:id, 
+                    active:true
+                }}).then(num=>{
+                    if(num == 1){
+                        return res.send({
+                            message:"Publicity updated"
+                        })
+                    }
+                    else{
+                        return res.status(404).send({
+                            message:`Can't update Publicity with the id:${id}`
+                        })
+                    }
+            }).catch(err=>{
+                return res.status(500).send({message:err.message||"Error while updating Publicity"})
+            })
         }
     })
 
-    Publicity.update(publicity,
-        {where:{
-            id:id, 
-            active:true
-        }}).then(num=>{
-            if(num == 1){
-                return res.send({
-                    message:"Publicity updated"
-                })
-            }
-            else{
-                return res.status(404).send({
-                    message:`Can't update Publicity with the id:${id}`
-                })
-            }
-    }).catch(err=>{
-        return res.status(500).send({message:err.message||"Error while updating Publicity"})
-    })
+  
 }
 
 

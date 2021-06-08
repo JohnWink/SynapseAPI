@@ -57,7 +57,48 @@ exports.findAll = (req,res) =>{
                 {model:Item}
                 ]
     }).then(data=>{
-        res.send(data)
+        let response = []
+        console.log("data: ", data)
+        for(let i= 0; i< data.length;i++){
+            response[i] = {
+                id: data[i].id,
+                minimumStock: data[i].minimumStock,
+                categories:[],
+                subCategories:[],
+                productInformations:[],
+                items:[]
+            }
+         
+          
+            response[i].categories = (data[i].category)
+            
+          
+            if(data[i].subCategory !== null){
+                for(let j = 0;j<data[i].subCategory.length;j++){
+                    if(data[i].subCategory[j].active){
+                        response[i].subCategories.push(data[i].subCategory[j])
+                    }
+                }
+            }
+            
+            if(data[i].productInformations !== null){
+                for(let j = 0;j<data[i].productInformations.length;j++){
+                    if(data[i].productInformations[j].active){
+                        response[i].productInformations.push(data[i].productInformations[j])
+                    }
+                }
+            }
+           
+            if(data[i].items !== null){
+                for(let j = 0;j<data[i].items.length;j++){
+                    if(data[i].items[j].active){
+                        response[i].items.push(data[i].items[j])
+                    }
+                }
+            }
+           
+        }
+        res.send(response)
     }).catch(err=>{
         res.status(500).send({message:err.message||"Error while finding all Products name"})
     })
@@ -163,7 +204,7 @@ exports.activate = (req,res) =>{
 
 
 
-exports.countSales = (req,res) =>{
+exports.findByStore = (req,res) =>{
     const id = req.params.idStore
 
     Product.findAll({

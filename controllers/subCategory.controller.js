@@ -85,9 +85,20 @@ exports.upload = (req,res) =>{
                     {image:upload},
                     {where:{id:req.params.idSubCategory}}).then(num=>{
                         if(num == 1){
-                            return res.send({
-                                message:"subCategory's image uploaded"
-                            })
+                            SubCategory.update({active:true},
+                                {where:{id:req.params.idSubCategory}
+                                }).then(num=>{
+                                    if(num == 1){
+                                        return res.send({
+                                            message:"subCategory's image uploaded"
+                                        })
+                                    }else{
+                                        return res.status(404).send({
+                                            message:`Can't activate subCategory`
+                                        })
+                                    }
+                                })
+              
                         }
                         else{
                             return res.status(404).send({

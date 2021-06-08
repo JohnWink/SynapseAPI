@@ -4,7 +4,7 @@ module.exports = app =>{
 
     app.get('/products', auth.authenticateJWT,  product.findAll)
     app.get('/products/:idProduct', auth.authenticateJWT,  product.findOne)
-    app.get('/stores/:idStore/products/sale', auth.authenticateJWT,  product.countSales)
+    app.get('/stores/:idStore/products', auth.authenticateJWT,  product.findByStore)
     app.post('/products', auth.authenticateJWT,  product.create)
     app.put('/products/:idProduct', auth.authenticateJWT,  product.update)
     app.put('/products/:idProduct/activate', auth.authenticateJWT,  product.activate)

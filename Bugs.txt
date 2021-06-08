@@ -1,0 +1,1 @@
+In login success modal, clicking out of it closes the box, making the user have to login again

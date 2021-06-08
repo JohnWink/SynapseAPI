@@ -1,6 +1,5 @@
 const db = require ("../models");
-const Category = db.categories;
-const SubCategory = db.subCategories
+const Language = db.languages;
 const multer = require('multer');
 const multerS3 = require('multer-s3');
 const path = require('path')
@@ -10,17 +9,39 @@ const  spacesEndpoint = new aws.Endpoint('fra1.digitaloceanspaces.com')
 const s3 =  new aws.S3({endpoint: spacesEndpoint}) 
 
 
+
+
+
+
 exports.create = (req,res) =>{
-    const category = {
-        category:req.body.category
+
+    const order = req.body.order
+    const languageName = req.body.language
+
+    const language = {
+       order: order,
+       language: languageName
     }
 
-    Category.create(category).then(data=>{
-        res.send(data)
-    }).catch(err=>{
-        res.status(500).send({message:err.message||"Error while creating category name"})
+    Language.findOne({where:{order:order}}).then(data=>{
+        if(data){
+            return res.status(403).send("Order number already exists")
+        }else{
+            Language.create(language).then(data=>{
+                return  res.send(data)
+            }).catch(err =>{
+                return  res.status(500).send({message:err.message||"Error while creating Language"})
+            })
+        }
     })
+    
+
+    
 }
+
+
+
+
 
 exports.upload = (req,res) =>{
 
@@ -80,20 +101,20 @@ exports.upload = (req,res) =>{
                 let upload = `https://space-synapse.fra1.digitaloceanspaces.com/${req.file.key}`
               
               
-                Category.update(
+                Language.update(
                     {image:upload},
-                    {where:{id:req.params.idCategory}}).then(num=>{
+                    {where:{id:req.params.idLanguage}}).then(num=>{
                         if(num == 1){
-                            Category.update({active:true},
-                                            {where:{id:req.params.idCategory}
+                            Language.update({active:true},
+                                            {where:{id:req.params.idLanguage}
                                             }).then(num=>{
                                                 if(num == 1){
                                                     return res.send({
-                                                        message:"category's image uploaded"
+                                                        message:"Language's image uploaded"
                                                     })
                                                 }else{
                                                     return res.status(404).send({
-                                                        message:`Can't activate category`
+                                                        message:`Can't activate Language`
                                                     })
                                                 }
                                             })
@@ -101,12 +122,12 @@ exports.upload = (req,res) =>{
                         }
                         else{
                             return res.status(404).send({
-                                message:`Can't upload category's image`
+                                message:`Can't upload Language's image`
                             })
                         }
                 }).catch(err => {
                     res.status(500).send({
-                        message: err.message || "Error while uploading Category image"
+                        message: err.message || "Error while uploading Language image"
                     })
                 })       
         }
@@ -115,111 +136,82 @@ exports.upload = (req,res) =>{
     
 }
 
-
 exports.update = (req,res)=>{
-    const id  = req.params.idCategory
+    const id  = req.params.idLanguage
 
-    const category = {
-        category:req.body.category
+    const language = {
+        language:req.body.language,
+        order:req.body.order
     }
 
-    Category.update(category,
+    Language.update(language,
         {where:{
             id:id, 
             active:true
         }}).then(num=>{
             if(num == 1){
                 return res.send({
-                    message:"category updated"
+                    message:"Language updated"
                 })
             }
             else{
                 return res.status(404).send({
-                    message:`Can't update category`
+                    message:`Can't update Language`
                 })
             }
     }).catch(err=>{
-        res.status(500).send({message:err.message||"Error while updating category"})
+        res.status(500).send({message:err.message||"Error while updating Language"})
     })
 }
 
 exports.activate = (req,res) =>{
 
-    const id  = req.params.idCategory
+    const id  = req.params.idLanguage
 
-    Category.update({active:true},
+    Language.update({active:true},
         {where:{
             id:id, 
             active:false
         }}).then(num=>{
             if(num == 1){
                 return res.send({
-                    message:"category activated"
+                    message:"language activated"
                 })
             }
             else{
                 return res.status(404).send({
-                    message:`Can't activate category with the id:${id}`
+                    message:`Can't activate language with the id:${id}`
                 })
             }
     }).catch(err=>{
-        res.status(500).send({message:err.message||"Error while activating category"})
+        res.status(500).send({message:err.message||"Error while activating language"})
     })
     
 }
 
 exports.findAll = (req,res) =>{
-    Category.findAll({where:{active:true}, include:[{model:SubCategory}]}).then(data=>{
-
-        let response = []
-        
-        for(let i= 0; i< data.length;i++){
-            response.push({
-                id: data[i].id,
-                category: data[i].category,
-                image: data[i].image,
-                subCategories:[]
-            })
-            for(let j = 0;j<data[i].subCategories.length;j++){
-                
-                if(data[i].subCategories[j].active){
-                    response[i].subCategories.push(data[i].subCategories[j])
-                }
-            }
-        }
-        res.send(response)
+    Language.findAll({where:{active:true}}).then(data=>{
+        res.send(data)
     }).catch(err=>{
-        res.status(500).send({message:err.message||"Error while finding all categories"})
+        res.status(500).send({message:err.message||"Error while finding all language"})
     })
 }
 
-exports.findOne = (req,res)=>{
-    const id = req.params.idCategory
-
-    Category.findOne({where:{id:id,active:true}}).then(data=>{
-        if(data){
-           return res.send(data)
-        }
-        return res.status(404).send("Category not found")
-    }).catch(err=>{
-        res.status(500).send({message:err.message||"Error while finding one category"})
-    })  
-}
 
 exports.delete = (req,res) =>{
-    const id = req.params.idCategory
-    Category.update({active:false},{where:{id:id, active:true }}).then(num=>{
+    const id = req.params.idLanguage
+    Language.update({active:false},{where:{id:id, active:true }}).then(num=>{
         if(num == 1){
             return res.send({
-                message:"category deleted"
+                message:"language deleted"
             })
         }
         else{
             return res.status(404).send({
-                message:`Can't delete category with the id:${id}`
+                message:`Can't delete language with the id:${id}`
             })
         }
 }).catch(err=>{
-    res.status(500).send({message:err.message||"Error while deleting category"})
+    res.status(500).send({message:err.message||"Error while deleting language"})
 })
 }

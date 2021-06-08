@@ -35,7 +35,7 @@ db.suggestions = require("./suggestion.model.js")(sequelize, Sequelize);
 db.supports = require("./support.model.js")(sequelize, Sequelize);
 db.users = require("./user.model.js")(sequelize, Sequelize);
 db.publicities = require("./publicity.model.js")(sequelize, Sequelize);
-
+db.languages = require("./language.model.js")(sequelize, Sequelize);
 
 //CATEGORY-SUBCATEGORY
 db.categories.hasMany(db.subCategories, {foreignKey:'idCategory'});
