@@ -8,7 +8,7 @@ const db = require("./models/index.js");
 var app = express();
 
 var corsOptions = {
-    origin: ["https://eager-hugle-673cd6.netlify.app", "http://localhost:8080"],
+    origin: ["https://synapsebo.netlify.app", "http://localhost:8080"],
     methods:"GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
     optionsSuccessStatus: 200
   };
