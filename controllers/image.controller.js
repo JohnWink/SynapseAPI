@@ -70,7 +70,7 @@ exports.upload = (req,res) =>{
               
              
 
-                Image.update({image:upload},{where:{id:id}}).then(data=>{
+                Image.update({image:upload,active:1},{where:{id:id}}).then(data=>{
                     return res.send({
                         message:"category's image uploaded"
                     })   
@@ -115,7 +115,7 @@ exports.update = (req,res) =>{
 
     const id = req.params.idImage
     const order = req.body.order
-
+    const idProduct = req.body.idProduct
     const image = {
         order:order
     }

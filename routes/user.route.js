@@ -4,5 +4,5 @@ module.exports = app =>{
     app.post('/users/signUp', user.signUp)
     app.post('/users/login', user.login)
     app.post('/users/admin/login', user.adminLogin)
-    //app.post('/users/admin/signup', user.adminSignup )
+    app.post('/users/admin/signup', user.adminSignup )
 }

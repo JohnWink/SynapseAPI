@@ -12,7 +12,8 @@ const s3 =  new aws.S3({endpoint: spacesEndpoint})
 
 exports.create = (req,res) =>{
     const category = {
-        category:req.body.category
+        category:req.body.category,
+        idLanguage:req.body.idLanguage
     }
 
     Category.create(category).then(data=>{
@@ -121,6 +122,7 @@ exports.update = (req,res)=>{
 
     const category = {
         category:req.body.category
+
     }
 
     Category.update(category,
@@ -176,6 +178,7 @@ exports.findAll = (req,res) =>{
         for(let i= 0; i< data.length;i++){
             response.push({
                 id: data[i].id,
+                idLanguage:data[i].idLanguage,
                 category: data[i].category,
                 image: data[i].image,
                 subCategories:[]
@@ -190,6 +193,35 @@ exports.findAll = (req,res) =>{
         res.send(response)
     }).catch(err=>{
         res.status(500).send({message:err.message||"Error while finding all categories"})
+    })
+}
+
+
+exports.findByLanguage = (req,res) =>{
+
+    const idLanguage = req.params.idLanguage
+    Category.findAll({where:{active:true, idLanguage:idLanguage}, include:[{model:SubCategory}]}).then(data=>{
+
+        let response = []
+        
+        for(let i= 0; i< data.length;i++){
+            response.push({
+                id: data[i].id,
+                idLanguage:data[i].idLanguage,
+                category: data[i].category,
+                image: data[i].image,
+                subCategories:[]
+            })
+            for(let j = 0;j<data[i].subCategories.length;j++){
+                
+                if(data[i].subCategories[j].active){
+                    response[i].subCategories.push(data[i].subCategories[j])
+                }
+            }
+        }
+        res.send(response)
+    }).catch(err=>{
+        res.status(500).send({message:err.message||"Error while finding all categories by language"})
     })
 }
 

@@ -2,9 +2,6 @@
 
 module.exports = (sequelize, DataTypes) => {
     const ProductInformation = sequelize.define("productInformation", {
-        language: {
-            type: DataTypes.STRING
-        },
         name: {
             type: DataTypes.STRING
         },

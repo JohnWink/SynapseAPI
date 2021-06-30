@@ -1,56 +1,174 @@
 const db = require ("../models");
 const ProductInformation = db.productInformations;
-
-
+const Category = db.categories
+const SubCategory = db.subCategories
+const Product = db.products
+const Language = db.languages
+const ProductCategory = db.products_categories
+const ProductSubCategory = db.products_subCategories
 
 exports.create = (req,res) =>{
-    const language = req.body.language
+    const idLanguage = req.body.idLanguage
     const name = req.body.name
     const description = req.body.description
     const summary = req.body.summary
-    const id = req.params.idProduct
+    const idProduct = req.params.idProduct
 
-    ProductInformation.findOne({where:{idProduct:id,language:language}}).then(data=>{
+    const idCategory = req.body.idCategory
+    const idSubCategory = req.body.idSubCategory
+
+    ProductInformation.findOne({where:{idProduct:idProduct,idLanguage:idLanguage}}).then(data=>{
         if(data){
             return res.status(403).send("Language already exists")
         }
     })
     const productInformation = {
-        idProduct: id,
-        language: language,
+        idProduct: idProduct,
+        idLanguage: idLanguage,
         name : name,
         description: description,
         summary : summary
     }
 
-    ProductInformation.create(productInformation).then(data=>{
-        return  res.send(data)
+    console.log("idCategory: ", idCategory)
+    console.log("idSubCategory: ", idSubCategory)
+
+   
+
+    
+
+    ProductInformation.create(productInformation).then(()=>{
+        const productCategory = {
+            idProduct:idProduct,
+            idCategory: idCategory
+        }
+    
+        ProductCategory.create(productCategory).then(()=>{
+            if( idSubCategory != 'null'){
+                const productSubCategory = {
+                    idProduct: idProduct,
+                    idSubCategory: idSubCategory
+                }
+                ProductSubCategory.create(productSubCategory).then(()=>{
+                    return res.send({
+                        message:"success"
+                    })
+                }).catch(err =>{
+                    return  res.status(500).send({message:err.message||"Error while creating ProductSubCategory"})
+                })
+
+            }else{
+                return res.send({
+                    message:"success"
+                })
+            }
+
+            
+        }).catch(err =>{
+            return  res.status(500).send({message:err.message||"Error while creating ProductCategory"})
+        })
     }).catch(err =>{
-        return  res.status(500).send({message:err.message||"Error while creating Production Information"})
+        return  res.status(500).send({message:err.message||"Error while creating ProductInformation"})
     })
+
+  
+
+
+  
+
+
+
+    
+    
 
    
 }
 
+exports.findByLanguage = (req,res) =>{
+    const idLanguage = req.params.idLanguage
+
+    ProductInformation.findAll({
+        where:{
+            idLanguage:idLanguage, 
+            active:true,
+            //attributes:["id","name","summary", "description", "idLanguage"],
+        },
+        include:[
+            {
+                model:Product, 
+                where:{active:true},
+                //attributes:["id","minimumStock"],
+                include:[
+                    {
+                        model:Category,
+                        where:{active:true},
+                        //attributes:["id","category"],
+                    },
+                    {
+                        model:SubCategory,
+                        //attributes:["id","subCategory"],
+                    }
+                ]
+            },
+        ]
+    }).then(data=>{
+        res.send(data)
+    }).catch(err=>{
+        res.status(500).send({message:err.message||"Error while finding all Products by language"})
+    })
+}
+
+
+exports.findByProduct = (req,res) =>{
+    const idProduct = req.params.idProduct
+
+    ProductInformation.findAll({
+        where:{
+            idProduct:idProduct, 
+            active:true,
+            //attributes:["id","name","summary", "description", "idLanguage"],
+        },
+        include:[
+            {
+                model:Product, 
+                where:{active:true},
+                //attributes:["id","minimumStock"],
+                include:[
+                    {
+                        model:Category,
+                        where:{active:true},
+                        //attributes:["id","category"],
+                    },
+                    {
+                        model:SubCategory,
+                        //attributes:["id","subCategory"],
+                    }
+                ]
+            },
+            {
+                model:Language,
+                where:{active:true}
+            }
+        ]
+    }).then(data=>{
+        res.send(data)
+    }).catch(err=>{
+        res.status(500).send({message:err.message||"Error while finding all Products by product"})
+    })
+}
+
 exports.update = (req,res) =>{
-    const language = req.body.language
     const name = req.body.name
     const description = req.body.description
     const summary = req.body.summary
     const id = req.params.idProductInformation
 
      const productInformation = {
-        language: language,
         name : name,
         description: description,
         summary : summary
     }
 
-    ProductInformation.findOne({where:{idProduct:id,language:language}}).then(data=>{
-        if(data){
-            return res.status(403).send("Language already exists")
-        }
-    })
     
     ProductInformation.update(productInformation,
         {where:{

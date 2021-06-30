@@ -13,6 +13,7 @@ exports.create = (req,res) =>{
     console.log("idCategory: ", req.params.idCategory)
     const subCategory = {
         subCategory:req.body.subCategory,
+        idLanguage: req.body.idLanguage,
         idCategory: req.params.idCategory
     }
 

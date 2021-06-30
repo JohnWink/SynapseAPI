@@ -1,6 +1,8 @@
 const db = require ("../models");
 const Store = db.stores;
 const History = db.histories
+const Item = db.items
+const Product = db.products
 
 exports.create = (req,res) => {
      const store = {
@@ -82,6 +84,30 @@ exports.getAll = (req,res) =>{
     }).catch(err =>{
         res.status(500).send({
             message:err.message || `Error occurred while getting all stores` 
+        })
+    })
+}
+
+exports.findByProduct = (req,res) =>{
+
+    const idProduct = req.params.idProduct
+    Store.findAll({
+        where:{active:true},
+        include:[
+            {
+                model:Item,
+                where:{active:true},
+                include:[{
+                    model:Product,
+                    where:{id:idProduct, active:true}
+                }]
+            },
+        ]
+    }).then((data)=>{
+        res.send(data)
+    }).catch((err)=>{
+        res.status(500).send({
+            message:err.message || `Error occurred while getting all stores by product` 
         })
     })
 }

@@ -42,7 +42,7 @@ exports.signUp = (req,res) =>{
         })
       
 }
-/*
+
 exports.adminSignup = (req,res) =>{
     if(!req.body.email || !req.body.password){
             res.status(400).send({
@@ -68,7 +68,7 @@ exports.adminSignup = (req,res) =>{
             })
         })
 }
-*/
+
 function sendSignUpMail(email, idUser){
 
     var token = jwt.sign({id:idUser}, nodemailerConfig.secret, {

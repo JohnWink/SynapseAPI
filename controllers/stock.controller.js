@@ -13,6 +13,27 @@ exports.create = (req,res) =>{
     })
 }
 
+exports.createMany = (req,res) =>{
+    const idItem = req.params.idItem
+
+    const amount = req.body.amount
+  
+
+    let body = []
+
+    for(let i = 0; i < amount ; i++){
+        body.push({
+            idItem:idItem
+        })
+    }
+ 
+    Stock.bulkCreate(body).then(data=>{
+         res.send(data)
+     }).catch(err=>{
+         res.status(500).send({message:err.message||"Error while creating many stocks"})
+     })
+ }
+
 
 exports.findByItem = (req,res) =>{
     const idItem = req.params.idItem
@@ -38,6 +59,7 @@ exports.countByItem = (req,res) =>{
 
 
 
+
 exports.delete = (req,res) =>{
     const id = req.params.idStock
     Stock.update({active:false},{where:{id:id, active:true }}).then(num=>{
@@ -55,3 +77,4 @@ exports.delete = (req,res) =>{
     res.status(500).send({message:err.message||"Error while deleting stock"})
 })
 }
+

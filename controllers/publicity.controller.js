@@ -22,14 +22,16 @@ exports.findAll = (req,res) =>{
 exports.create = (req,res) =>{
 
     const order = req.body.order
+    const idLanguage = req.body.idLanguage
 
     const publicity = {
-       order: order
+       order: order,
+       idLanguage:idLanguage
     }
 
-    Publicity.findOne({where:{order:order}}).then(data=>{
+    Publicity.findOne({where:{order:order, idLanguage:idLanguage}}).then(data=>{
         if(data){
-            return res.status(403).send("Order number already exists")
+            return res.status(403).send("Order number already exists in that language")
         }else{
             Publicity.create(publicity).then(data=>{
                 return  res.send(data)
@@ -135,14 +137,16 @@ exports.update = (req,res) =>{
 
     const order = req.body.order
     const id = req.params.idPublicity
-
+    const idLanguage = req.body.idLanguage
+    
      const publicity = {
         order: order,
+        idLanguage:idLanguage
     }
 
-    Publicity.findOne({where:{order:order,active:true}}).then(data=>{
+    Publicity.findOne({where:{order:order,idLanguage:idLanguage,active:true}}).then(data=>{
         if(data){
-            return res.status(403).send("Order number already exists")
+            return res.status(403).send("Order number already exists in that language")
         }else{
             Publicity.update(publicity,
                 {where:{

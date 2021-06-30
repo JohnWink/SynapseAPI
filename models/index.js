@@ -36,13 +36,57 @@ db.supports = require("./support.model.js")(sequelize, Sequelize);
 db.users = require("./user.model.js")(sequelize, Sequelize);
 db.publicities = require("./publicity.model.js")(sequelize, Sequelize);
 db.languages = require("./language.model.js")(sequelize, Sequelize);
+db.products_categories = require("./products_categories.model.js")(sequelize, Sequelize);
+db.products_subCategories = require("./products_subCategories.model.js")(sequelize, Sequelize);
+
+
+//LANGUAGE-CATEGORY
+db.languages.hasMany(db.categories,{foreignKey:'idLanguage'})
+//LANGUAGE-SUBCATEGORY
+db.languages.hasMany(db.subCategories,{foreignKey:'idLanguage'})
+//LANGUAGE-PUBLICITY
+db.languages.hasMany(db.publicities,{foreignKey:'idLanguage'})
+//LANGUAGE-PRODUCT_INFORMATION
+db.languages.hasMany(db.productInformations,{foreignKey:'idLanguage'})
+
+//PUBLICITY-LANGUAGE
+db.publicities.belongsTo(db.languages,{foreignKey:'idLanguage'})
 
 //CATEGORY-SUBCATEGORY
 db.categories.hasMany(db.subCategories, {foreignKey:'idCategory'});
 
+//CATEGORY-LANGUAGE
+db.categories.belongsTo(db.languages,{
+  foreignKey:"idLanguage",
+})
+
+//CATEGORY-PRODUCT
+db.categories.belongsToMany(db.products,{
+  through: db.products_categories,
+ 
+  foreignKey:"idCategory",
+})
+
+
+
+
 //SUBCATEGORY-CATEGORY
 db.subCategories.belongsTo(db.categories,{
   foreignKey:"idCategory",
+})
+
+
+
+//SUBCATEGORY-LANGUAGE
+db.subCategories.belongsTo(db.languages,{
+  foreignKey:"idLanguage",
+})
+
+//CATEGORY-PRODUCT
+db.subCategories.belongsToMany(db.products,{
+  through:db.products_subCategories,
+
+  foreignKey:"idSubCategory",
 })
 
 // HISTORY-STOCK
@@ -89,15 +133,19 @@ db.items.hasMany(db.stocks,{foreignKey :"idItem"})
 db.products.hasMany(db.items,{foreignKey:"idProduct"})
 
 //PRODUCT-CATEGORY
-db.products.belongsTo(db.categories,{
-  foreignKey:"idCategory",
+db.products.belongsToMany(db.categories,{
+  through:db.products_categories,
+
+  foreignKey:"idProduct",
 })
 
 //PRODUCT-SUBCATEGORY
-db.products.belongsTo(db.subCategories,{
-  foreignKey:{
-      name:"idSubCategory",
-      allowNull:true},
+db.products.belongsToMany(db.subCategories,{
+  
+      through:db.products_subCategories,
+
+      foreignKey:"idProduct",
+      allowNull:true,
 })
 
 //PRODUCT-IMAGE
@@ -111,6 +159,11 @@ db.productInformations.belongsTo(db.products,{
   foreignKey:"idProduct"
 })
 
+//PRODUCTION_INFORMATION-LANGUAGE
+db.productInformations.belongsTo(db.languages,{
+  foreignKey:"idLanguage"
+})
+
 //STOCK-ITEM
 db.stocks.belongsTo(db.items,{
   foreignKey:"idItem",
@@ -120,7 +173,7 @@ db.stocks.belongsTo(db.items,{
 db.stores.hasMany(db.histories,{foreignKey :"idStore"})
 
 //STORE-ITEM
-db.stores.hasMany(db.items,{foreignKey :"idItem"})
+db.stores.hasMany(db.items,{foreignKey :"idStore"})
 
 
 //SUGGESTION-USER

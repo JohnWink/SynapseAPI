@@ -5,9 +5,12 @@ const Item = db.items;
 const ProductInformation = db.productInformations
 const Category = db.categories
 const SubCategory = db.subCategories
-const image = db.images
+const Image = db.images
 const Stock = db.stocks
+const Products_Categories = db.products_categories
+const Products_SubCategories = db.products_subCategories
 const Sequelize = require("sequelize");
+const { json } = require("sequelize");
 
 exports.findOne = (req,res) =>{
     const id = req.params.idProduct
@@ -117,12 +120,40 @@ exports.create = (req,res) =>{
         idSubCategory: idSubCategory,
     }
 
+    let result
+
     Product.create(product).then(data=>{
-        return  res.send(data)
+       result = data.id
+        console.log("data: ", idSubCategory)
+     
+        const product_category = {
+            idProduct: result,
+            idCategory: idCategory,
+        }
+        Products_Categories.create(product_category).then(()=>{
+            if(idSubCategory){
+                const product_subCategory = {
+                    idProduct: result,
+                    idSubCategory: idSubCategory,
+                }
+                Products_SubCategories.create(product_subCategory).then(()=>{
+                     
+                })
+            }
+            Product.findOne({where:{id:result,active:true}}).then(data=>{
+                return res.send(data)
+            })
+            
+        })
+        
+        
     }).catch(err =>{
         return  res.status(500).send({message:err.message||"Error while creating Product"})
     })
 
+    
+
+    
    
 }
 
@@ -158,21 +189,39 @@ exports.update = (req,res) =>{
 }
 
 exports.delete = (req,res) =>{
-    const id = req.params.idProduct
-    Product.update({active:false},{where:{id:id, active:true }}).then(num=>{
-        if(num == 1){
-            return res.send({
-                message:"Product deleted"
-            })
-        }
-        else{
+    const idProduct = req.params.idProduct
+    Product.update({active:false},{where:{id:idProduct, active:true }}).then(num=>{
+        if(num == 0){
             return res.status(404).send({
                 message:`Can't delete Product with the id:${id}`
             })
         }
-}).catch(err=>{
-    res.status(500).send({message:err.message||"Error while creating Product name"})
-})
+
+        }).catch(err=>{
+            return res.status(500).send({message:err.message||"Error while creating Product name"})
+        })
+        Image.update({active:false},{where:{idProduct:idProduct, active:true}}).then(num=>{
+    
+        }).catch(err=>{
+            return res.status(500).send({message:err.message||"Error while creating Product name"})
+        })
+    
+
+    Item.update({active:false},{where:{idProduct:idProduct, active:true}}).then(num=>{
+    
+        }).catch(err=>{
+            return res.status(500).send({message:err.message||"Error while creating Product name"})
+        })
+    ProductInformation.update({active:false},{where:{idProduct:idProduct, active:true}}).then(num=>{
+    
+    }).catch(err=>{
+        return res.status(500).send({message:err.message||"Error while creating Product name"})
+    })
+
+    return res.send({
+        message:"product deleted"
+    })
+    
 }
 
 

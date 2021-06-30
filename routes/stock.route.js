@@ -5,6 +5,7 @@ module.exports = app =>{
     app.get('/items/:idItem/stocks', auth.authenticateJWT,  stock.findByItem)
     app.get('/items/:idItem/stocks/count',  auth.authenticateJWT,  stock.countByItem)
     app.post('/items/:idItem/stocks/',  auth.authenticateJWT,  stock.create)
+    app.post('/items/:idItem/stocks/many',  auth.authenticateJWT,  stock.createMany)
     app.delete('/stocks/:idStock',  auth.authenticateJWT,  stock.delete)
 
 }
