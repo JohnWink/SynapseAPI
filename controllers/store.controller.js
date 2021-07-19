@@ -91,6 +91,9 @@ exports.getAll = (req,res) =>{
 exports.findByProduct = (req,res) =>{
 
     const idProduct = req.params.idProduct
+
+
+    
     Store.findAll({
         where:{active:true},
         include:[

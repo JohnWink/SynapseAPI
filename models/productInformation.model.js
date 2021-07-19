@@ -6,10 +6,10 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING
         },
         description: {
-            type: DataTypes.STRING
+            type: DataTypes.TEXT
         },
         summary:{
-            type: DataTypes.STRING
+            type: DataTypes.TEXT
         },
         active:{
             type: DataTypes.BOOLEAN,

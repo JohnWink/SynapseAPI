@@ -31,23 +31,6 @@ exports.findOne = (req,res) =>{
 
 }
 
-exports.findByStore = (req,res) =>{
-    const idStore = req.params.idStore
-    Product.findAll({
-        where:{active:true}, 
-        include:[
-                {model:Category, where:{active:true}},
-                {model:SubCategory},
-                {model:ProductInformation},
-                {model:Item, where:{id:idStore,active:true}}
-                ]
-    }).then(data=>{
-        res.send(data)
-    }).catch(err=>{
-        res.status(500).send({message:err.message||"Error while finding all Products name"})
-    })
-}
-
 exports.findAll = (req,res) =>{
    
 // WARNING: THERE WILL BE SUBCATEGORIES AND PRODUCT INFORMATIONS THAT ARE DELETED WHICH WILL SHOW UP. PLEASE CHECK THIS ISSUE ON FRONT END
@@ -109,9 +92,10 @@ exports.findAll = (req,res) =>{
 }
 
 exports.create = (req,res) =>{
-    const minStock = req.body.minStock
-    const idCategory = req.body.idCategory
-    const idSubCategory = req.body.idSubCategory
+    let minStock = req.body.minStock
+    let idCategory = req.body.idCategory
+    let idSubCategory = req.body.idSubCategory
+
 
 
     const product = {
@@ -131,7 +115,9 @@ exports.create = (req,res) =>{
             idCategory: idCategory,
         }
         Products_Categories.create(product_category).then(()=>{
+            console.log("idSubCategory: ", idSubCategory)
             if(idSubCategory){
+                console.log("NOT CATCHING NULL")
                 const product_subCategory = {
                     idProduct: result,
                     idSubCategory: idSubCategory,
@@ -274,7 +260,7 @@ exports.findByStore = (req,res) =>{
             {
                 model:ProductInformation,
                 as:'productInformations',
-                where:{active:true, language:'portuguese'}
+                where:{active:true, idLanguage:'1'}
             } 
         ],
     }).then(data=>{
