@@ -95,7 +95,7 @@ exports.create = (req,res) =>{
         order:order
     }
 
-    Image.findOne({where:{idProduct:idProduct,order:order}}).then(data=>{
+    Image.findOne({where:{idProduct:idProduct,order:order, active:true}}).then(data=>{
         if(data){
             return res.status(403).send("Can't have two images with the same order number")
         }

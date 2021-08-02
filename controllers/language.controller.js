@@ -23,7 +23,7 @@ exports.create = (req,res) =>{
        language: languageName
     }
 
-    Language.findOne({where:{order:order}}).then(data=>{
+    Language.findOne({where:{order:order, active: true}}).then(data=>{
         if(data){
             return res.status(403).send("Order number already exists")
         }else{
