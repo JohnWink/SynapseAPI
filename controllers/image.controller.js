@@ -121,7 +121,7 @@ exports.update = (req,res) =>{
     }
 
 
-    Image.findOne({where:{idProduct:idProduct,order:order}}).then(data=>{
+    Image.findOne({where:{idProduct:idProduct,order:order, active:true}}).then(data=>{
         if(data){
             return res.status(403).send("Can't have two images with the same order number")
         }
@@ -205,6 +205,6 @@ exports.findByProduct = (req,res) =>{
     Image.findAll({where:{idProduct:idProduct, active:true}}).then(data=>{
        return res.send(data)
     }).catch(err=>{
-        res.status(500).send({message:err.message||"Error while finding Images by produt"})
+        res.status(500).send({message:err.message||"Error while finding Images by product"})
     })
 }
